@@ -11,7 +11,7 @@ from tree_sitter import Parser as TSParser
 from tree_sitter import Tree as TSTree
 from tree_sitter_typescript import language_tsx, language_typescript
 
-from src.modulus_cli.schemas import FunctionInfo
+from modulus_cli.schemas import FunctionInfo
 
 logger = logging.getLogger(__name__)
 

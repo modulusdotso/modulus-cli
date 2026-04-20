@@ -8,8 +8,8 @@ import re
 from fnmatch import fnmatch
 from typing import Any, Dict, List, Optional, Tuple
 
-from src.modulus_cli.function_extractor import FunctionExtractor
-from src.modulus_cli.schemas import FileAnalysis, RepoStructure
+from modulus_cli.function_extractor import FunctionExtractor
+from modulus_cli.schemas import FileAnalysis, RepoStructure
 
 logger = logging.getLogger(__name__)
 

@@ -1,2 +1,3 @@
-def main() -> None:
-    print("Hello from modulus-cli!")
+from modulus_cli.cli import main
+
+__all__ = ["main"]
