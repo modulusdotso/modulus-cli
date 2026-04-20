@@ -8,8 +8,8 @@ import re
 from fnmatch import fnmatch
 from typing import Any, Dict, List, Optional, Tuple
 
-from src.core.indexing.function_extractor import FunctionExtractor
-from src.core.indexing.schemas import FileAnalysis, RepoStructure
+from src.modulus_cli.function_extractor import FunctionExtractor
+from src.modulus_cli.schemas import FileAnalysis, RepoStructure
 
 logger = logging.getLogger(__name__)
 
@@ -375,7 +375,9 @@ class StaticInventoryCollector:
             logger.warning(f"Error analyzing file {file_path}: {str(e)}")
             return None
 
-    def collect_repo_data(self, workspace_id: str, workspace_path: str) -> Dict[str, Any]:
+    def collect_repo_data(
+        self, workspace_id: str, workspace_path: str
+    ) -> Dict[str, Any]:
         """Collect all workspace data for LLM analysis (steps 1–3)."""
         logger.info("=" * 80)
         logger.info(f"Collecting data for workspace: {workspace_id}")

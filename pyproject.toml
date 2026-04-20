@@ -4,10 +4,18 @@ version = "0.1.0"
 description = "CLI to setup modulus for Claude Code and Codex"
 readme = "README.md"
 authors = [
-    { name = "Subhajit Das (0verread)", email = "subhajit@modulus.so" }
+    { name = "Subhajit Das (0verread)", email = "subhajit@modulus.so" },
+    { name = "Husain Ghadiali (hg0-7)", email = "husain@modulus.so" },
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "anthropic>=0.96.0",
+    "esprima>=4.0.1",
+    "javalang>=0.13.0",
+    "python-dotenv>=1.2.2",
+    "tree-sitter>=0.25.2",
+    "tree-sitter-typescript>=0.23.2",
+]
 
 [project.scripts]
 modulus = "modulus_cli:main"
