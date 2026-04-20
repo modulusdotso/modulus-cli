@@ -1,0 +1,17 @@
+[project]
+name = "modulus-cli"
+version = "0.1.0"
+description = "CLI to setup modulus for Claude Code and Codex"
+readme = "README.md"
+authors = [
+    { name = "Subhajit Das (0verread)", email = "subhajit@modulus.so" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+modulus = "modulus_cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
