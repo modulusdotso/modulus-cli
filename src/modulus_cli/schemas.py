@@ -15,6 +15,7 @@ class FunctionInfo:
         start_line: Starting line number
         end_line: Ending line number
         file_path: Path to the file containing this function
+        content: Function content (body)
     """
 
     name: str
@@ -22,6 +23,7 @@ class FunctionInfo:
     start_line: int
     end_line: int
     file_path: str
+    content: str
 
 
 @dataclass

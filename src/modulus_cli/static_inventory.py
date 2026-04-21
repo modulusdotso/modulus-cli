@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import re
+import textwrap
 from fnmatch import fnmatch
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -355,9 +356,17 @@ class StaticInventoryCollector:
             language = self.function_extractor.detect_language(content, file_path)
 
             functions = self.function_extractor.extract_functions(content, file_path)
+            lines = content.splitlines()
             for func in functions:
                 func.file_path = file_path
-
+                start = max(func.start_line - 1, 0)
+                end = max(func.end_line, start)
+                end = min(end, len(lines))
+                if start < len(lines):
+                    raw_func = "\n".join(lines[start:end])
+                    func.content = textwrap.dedent(raw_func).strip("\n")
+                else:
+                    func.content = ""
             imports = self._extract_imports(content, language)
 
             dependencies = self._extract_dependencies(content, file_path)
@@ -379,9 +388,7 @@ class StaticInventoryCollector:
         self, workspace_id: str, workspace_path: str
     ) -> Dict[str, Any]:
         """Collect all workspace data for LLM analysis (steps 1–3)."""
-        logger.info("=" * 80)
         logger.info(f"Collecting data for workspace: {workspace_id}")
-        logger.info("=" * 80)
 
         logger.info("Collecting files from local workspace...")
         file_pairs = self._collect_local_files(workspace_path)
@@ -424,6 +431,7 @@ class StaticInventoryCollector:
                             "docstring": f.docstring,
                             "start_line": f.start_line,
                             "end_line": f.end_line,
+                            "content": f.content,
                         }
                         for f in fa.functions
                     ],

@@ -1,6 +1,8 @@
 import ast
 import logging
 import re
+from mailbox import linesep
+from shlex import join
 from typing import List
 
 import esprima
@@ -98,11 +100,13 @@ class FunctionExtractor:
         functions = []
         try:
             tree = ast.parse(content)
+            lines = content.splitlines()
 
             for node in ast.walk(tree):
                 if isinstance(node, ast.ClassDef):
                     for item in node.body:
                         if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                            # logger.info("Found function: %s", item)
                             method_name = f"{node.name}.{item.name}"
                             start_line = item.lineno
                             end_line = item.end_lineno
@@ -115,6 +119,7 @@ class FunctionExtractor:
                                     start_line=start_line,
                                     end_line=end_line,
                                     file_path="",
+                                    content="",
                                 )
                             )
 
@@ -139,6 +144,7 @@ class FunctionExtractor:
                                 start_line=start_line,
                                 end_line=end_line,
                                 file_path="",
+                                content="",
                             )
                         )
         except Exception as e:
@@ -199,6 +205,7 @@ class FunctionExtractor:
                             start_line=start_line,
                             end_line=end_line,
                             file_path="",
+                            content="",
                         )
                     )
 
@@ -286,6 +293,7 @@ class FunctionExtractor:
                             start_line=node.start_point[0] + 1,
                             end_line=node.end_point[0] + 1,
                             file_path="",
+                            content="",
                         )
                     )
                 elif node.type == "method_definition":
@@ -304,6 +312,7 @@ class FunctionExtractor:
                             start_line=node.start_point[0] + 1,
                             end_line=node.end_point[0] + 1,
                             file_path="",
+                            content="",
                         )
                     )
                 class_name = ""
@@ -343,6 +352,7 @@ class FunctionExtractor:
                         start_line=start_line,
                         end_line=end_line,
                         file_path="",
+                        content="",
                     )
                 )
         except Exception as e:
@@ -376,6 +386,7 @@ class FunctionExtractor:
                         start_line=start_line,
                         end_line=end_line,
                         file_path="",
+                        content="",
                     )
                 )
         except Exception as e:
@@ -415,6 +426,7 @@ class FunctionExtractor:
                         start_line=start_line,
                         end_line=end_line,
                         file_path="",
+                        content="",
                     )
                 )
         except Exception as e:
@@ -454,6 +466,7 @@ class FunctionExtractor:
                         start_line=start_line,
                         end_line=end_line,
                         file_path="",
+                        content="",
                     )
                 )
         except Exception as e:

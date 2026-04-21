@@ -3,8 +3,9 @@ import hashlib
 import logging
 import sys
 from pathlib import Path
+from plistlib import load
 
-from modulus_cli.config_store import load_api_key, save_api_key
+from modulus_cli.config_store import load_api_key, load_workspace_id, save_api_key
 from modulus_cli.indexer import RepositoryAnalysisSystem
 
 
@@ -33,6 +34,7 @@ def main() -> None:
 
     if args.command == "repo" and args.repo_command == "index":
         api_key = load_api_key()
+        workspace_id = load_workspace_id()
         if not api_key:
             print(
                 "You're not logged in. Run `modulus login --api-key <api-key>` first.",
@@ -46,7 +48,13 @@ def main() -> None:
             sys.exit(1)
 
         logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
-        workspace_id = hashlib.sha256(str(root).encode()).hexdigest()
+        if not workspace_id:
+            print(
+                "Workspace ID not found. Run `modulus login --api-key <api-key>` first.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
         ok = RepositoryAnalysisSystem(api_key).analyze_repository(
             workspace_id, str(root)
         )

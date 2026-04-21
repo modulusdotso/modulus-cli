@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
+from modulus_cli.api_client import verify_api_key
+
 
 def _config_dir() -> Path:
     base = os.environ.get("XDG_CONFIG_HOME")
@@ -15,9 +17,15 @@ def credentials_path() -> Path:
 
 
 def save_api_key(api_key: str) -> None:
+    # check api verification
+    response = verify_api_key(api_key)
+    data = response.json()
+    if response.status_code != 200 and data.get("verified"):
+        raise ValueError("Invalid API key")
+
     path = credentials_path()
     path.parent.mkdir(parents=True, exist_ok=True)
-    data: dict[str, Any] = {"api_key": api_key}
+    data: dict[str, Any] = {"api_key": api_key, "workspace_id": data.get("user_id")}
     path.write_text(json.dumps(data), encoding="utf-8")
     try:
         path.chmod(0o600)
@@ -34,4 +42,25 @@ def load_api_key() -> Optional[str]:
     except (json.JSONDecodeError, OSError):
         return None
     key = data.get("api_key")
+    workspace_id = data.get("workspace_id")
+    if not isinstance(workspace_id, str) or not workspace_id:
+        response = verify_api_key(key)
+        data = response.json()
+        workspace_id = data.get("user_id")
+        path.write_text(
+            json.dumps({"api_key": key, "workspace_id": workspace_id}), encoding="utf-8"
+        )
     return key if isinstance(key, str) and key else None
+
+
+def load_workspace_id() -> Optional[str]:
+    path = credentials_path()
+    if not path.is_file():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    return (
+        data.get("workspace_id") if isinstance(data.get("workspace_id"), str) else None
+    )
