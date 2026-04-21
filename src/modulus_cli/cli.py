@@ -1,12 +1,10 @@
 import argparse
-import hashlib
-import logging
 import sys
 from pathlib import Path
-from plistlib import load
 
 from modulus_cli.config_store import load_api_key, load_workspace_id, save_api_key
 from modulus_cli.indexer import RepositoryAnalysisSystem
+from modulus_cli.ui import configure_logging, error, info, success
 
 
 def main() -> None:
@@ -29,39 +27,37 @@ def main() -> None:
 
     if args.command == "login":
         save_api_key(args.api_key)
-        print("API key saved. You can run `modulus repo index <path>`.")
+        success("API key saved.")
+        info("You can run modulus repo index <path>.")
         return
 
     if args.command == "repo" and args.repo_command == "index":
+        configure_logging()
         api_key = load_api_key()
         workspace_id = load_workspace_id()
         if not api_key:
-            print(
-                "You're not logged in. Run `modulus login --api-key <api-key>` first.",
-                file=sys.stderr,
-            )
+            error("You're not logged in.")
+            info("Run modulus login --api-key <api-key> first.")
             sys.exit(1)
 
         root = args.path.expanduser().resolve()
         if not root.is_dir():
-            print(f"Not a directory: {root}", file=sys.stderr)
+            error(f"Not a directory: {root}")
             sys.exit(1)
 
-        logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
         if not workspace_id:
-            print(
-                "Workspace ID not found. Run `modulus login --api-key <api-key>` first.",
-                file=sys.stderr,
-            )
+            error("Workspace ID not found.")
+            info("Run modulus login --api-key <api-key> first.")
             sys.exit(1)
 
+        info(f"Indexing repository: [bold yellow]{root}[/bold yellow]")
         ok = RepositoryAnalysisSystem(api_key).analyze_repository(
             workspace_id, str(root)
         )
         if not ok:
-            print("Indexing failed.", file=sys.stderr)
+            error("Indexing failed.")
             sys.exit(1)
-        print("Indexing completed successfully.")
+        success("Indexing completed successfully.")
         return
 
     parser.error("Unknown command")

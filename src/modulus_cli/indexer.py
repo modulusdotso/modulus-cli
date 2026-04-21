@@ -1,13 +1,10 @@
-import json
 import logging
 import traceback
-import urllib.error
-import urllib.request
 from typing import Any, Dict
 
 import dotenv
 
-from modulus_cli.constants import MODULUS_INDEX_URL
+from modulus_cli.api_client import index_repo
 from modulus_cli.function_extractor import FunctionExtractor
 from modulus_cli.static_inventory import StaticInventoryCollector
 
@@ -15,38 +12,9 @@ dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-def run_inventory_indexing(repo_data: Dict[str, Any], api_key: str) -> bool:
-    """POST collected repo payload to the Modulus index API."""
-    body = json.dumps(repo_data).encode("utf-8")
-    logger.info("Indexing repo: %s", repo_data)
-    return True
-    # request = urllib.request.Request(
-    #     MODULUS_INDEX_URL,
-    #     data=body,
-    #     method="POST",
-    #     headers={
-    #         "Content-Type": "application/json",
-    #         "api-key": api_key,
-    #     },
-    # )
-    # try:
-    #     with urllib.request.urlopen(request, timeout=300) as response:
-    #         code = getattr(response, "status", response.getcode())
-    #         if 200 <= code < 300:
-    #             return True
-    #         logger.error("Index API returned status %s", code)
-    #         return False
-    # except urllib.error.HTTPError as exc:
-    #     detail = exc.read().decode("utf-8", errors="replace")
-    #     logger.error("Index API HTTP error %s: %s", exc.code, detail[:2000])
-    #     return False
-    # except urllib.error.URLError as exc:
-    #     logger.error("Index API request failed: %s", exc.reason)
-    #     return False
-
-
 def run_llm_indexing_from_repo_data(repo_data: Dict[str, Any], api_key: str) -> bool:
-    return run_inventory_indexing(repo_data, api_key)
+    index_repo(repo_data, api_key)
+    return True
 
 
 class RepositoryAnalysisSystem:
