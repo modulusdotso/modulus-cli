@@ -1,20 +1,19 @@
+import json
 import logging
 import traceback
 from typing import Any, Dict
-
-import dotenv
 
 from modulus_cli.api_client import index_repo
 from modulus_cli.function_extractor import FunctionExtractor
 from modulus_cli.static_inventory import StaticInventoryCollector
 
-dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-def run_llm_indexing_from_repo_data(repo_data: Dict[str, Any], api_key: str) -> bool:
-    index_repo(repo_data, api_key)
-    return True
+def run_llm_indexing_from_repo_data(repo_data: Dict[str, Any], api_key: str) -> Dict:
+    response = index_repo(repo_data, api_key)
+    resp_json = json.loads(response.text)
+    return resp_json
 
 
 class RepositoryAnalysisSystem:
@@ -33,14 +32,15 @@ class RepositoryAnalysisSystem:
 
         logger.info("RepositoryAnalysisSystem initialized successfully")
 
-    def analyze_repository(self, workspace_id: str, workspace_path: str) -> bool:
+    def analyze_repository(self, workspace_id: str, workspace_path: str) -> Dict:
         try:
             repo_data = self.static_inventory.collect_repo_data(
                 workspace_id, workspace_path
             )
 
-            return run_llm_indexing_from_repo_data(repo_data, self._api_key)
+            resp = run_llm_indexing_from_repo_data(repo_data, self._api_key)
+            return {"job_id": resp["job_id"], "status": resp["decision"]}
         except Exception as e:
             logger.error(f"Error analyzing workspace {workspace_id}: {str(e)}")
             logger.error(traceback.format_exc())
-            return False
+            return {"job_id": None, "status": "error"}

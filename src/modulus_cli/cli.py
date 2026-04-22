@@ -2,6 +2,8 @@ import argparse
 import sys
 from pathlib import Path
 
+from rich import print as rich_print
+
 from modulus_cli.config_store import load_api_key, load_workspace_id, save_api_key
 from modulus_cli.indexer import RepositoryAnalysisSystem
 from modulus_cli.ui import configure_logging, error, info, success
@@ -51,13 +53,15 @@ def main() -> None:
             sys.exit(1)
 
         info(f"Indexing repository: [bold yellow]{root}[/bold yellow]")
-        ok = RepositoryAnalysisSystem(api_key).analyze_repository(
+        resp = RepositoryAnalysisSystem(api_key).analyze_repository(
             workspace_id, str(root)
         )
-        if not ok:
+        if resp.get("status") == "error":
             error("Indexing failed.")
             sys.exit(1)
-        success("Indexing completed successfully.")
+        rich_print(
+            f"Indexing started successfully, id: [bold bright_cyan]{resp.get('job_id')}[/bold bright_cyan]"
+        )
         return
 
     parser.error("Unknown command")
