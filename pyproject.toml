@@ -1,6 +1,6 @@
 [project]
 name = "modulus-cli"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI to setup modulus for Claude Code and Codex"
 readme = "README.md"
 authors = [
