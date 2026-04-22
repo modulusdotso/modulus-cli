@@ -1,9 +1,34 @@
 # modulus-cli
-CLI to setup modulus for Claude Code and Codex
 
+Simple CLI to connect your local repository with Modulus for indexing.
 
-## usage
+## Install
 
-modulus login --api-key <api-key>
+```bash
+pip install modulus-cli
+```
 
-modulus repo index </path/to/dir>
+## Quick Start
+
+```bash
+modulus login --api-key <your-api-key>
+modulus repo index <path-to-your-repo>
+```
+
+## Commands
+
+### Login
+
+```bash
+modulus login --api-key <your-api-key>
+```
+
+Saves your API key locally after verification.
+
+### Index a repository
+
+```bash
+modulus repo index <path-to-your-repo>
+```
+
+Scans the repository and starts an indexing job.

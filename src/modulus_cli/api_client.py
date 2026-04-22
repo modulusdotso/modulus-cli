@@ -9,8 +9,9 @@ def verify_api_key(api_key: str) -> requests.Response:
 
 
 def index_repo(repo_data: dict, api_key: str) -> requests.Response:
-    return requests.post(
+    response = requests.post(
         MODULUS_INDEX_URL,
         json={"repo_data": repo_data, "api_key": api_key},
         headers={"Content-Type": "application/json"},
     )
+    return response
